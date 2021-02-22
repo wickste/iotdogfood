@@ -14,7 +14,7 @@
     "UserObjectId": {
       "type": "string",
       "metadata": {
-        "description": "Signed in user objectId"
+        "description": "Signed in user objectId. This value can be fetched by running the following in a powershell terminal. az ad signed-in-user show --query objectId"
       }
     },
     "HubName": {
