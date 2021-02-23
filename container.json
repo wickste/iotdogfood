@@ -17,8 +17,14 @@
       "defaultValue": "[format('{0}-dns', resourceGroup().name)]"
     },
     "imagePassword": {
-      "type": "secureString"
+      "type": "securestring",
+      "reference": {
+        "keyVault": {
+            "id": "/subscriptions/a7e14e22-d584-4d8a-b680-7e57e1aa0a28/resourceGroups/test/providers/Microsoft.KeyVault/vaults/testacr"
+        },
+        "secretName": "imagePassword"
     }
+  }
   },
   "functions": [],
   "variables": {},
