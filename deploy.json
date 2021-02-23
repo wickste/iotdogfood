@@ -1,0 +1,64 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ServerFarmName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the server farm to host the cloud app."
+      },
+      "defaultValue": "[format('{0}-dogfood-srv', resourceGroup().name)]"
+    },
+    "WebsiteName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the website to host the cloud app."
+      },
+      "defaultValue": "[format('{0}-dogfood-website', resourceGroup().name)]"
+    }
+  },
+  "functions": [],
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2020-06-01",
+      "name": "[parameters('ServerFarmName')]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "S1",
+        "tier": "Standard",
+        "size": "S1",
+        "family": "S",
+        "capacity": 1
+      },
+      "kind": "app"
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2020-06-01",
+      "name": "[parameters('WebsiteName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('ServerFarmName'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('ServerFarmName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Web/sites/sourcecontrols",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}/web', parameters('WebsiteName'))]",
+      "properties": {
+        "repoUrl": "https://github.com/vinagesh/iotdogfood.git",
+        "branch": "master",
+        "isManualIntegration": true
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('WebsiteName'))]"
+      ]
+    }
+  ],
+  "outputs": {}
+}
