@@ -1,0 +1,66 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ContainerName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the conatiner instance."
+      },
+      "defaultValue": "[format('{0}-container', resourceGroup().name)]"
+    },
+    "DnsName": {
+      "type": "string",
+      "metadata": {
+        "description": "The dns name of the conatiner instance."
+      },
+      "defaultValue": "[format('{0}-dns', resourceGroup().name)]"
+    }
+  },
+  "functions": [],
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.ContainerInstance/containerGroups",
+      "apiVersion": "2019-12-01",
+      "name": "[parameters('ContainerName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "containers": [
+          {
+            "name": "[parameters('ContainerName')]",
+            "properties": {
+              "image": "dogfoodcloudapp20210222172930.azurecr.io/dogfoodcloudapp:latest",
+              "resources": {
+                "requests": {
+                  "cpu": 1,
+                  "memoryInGB": 1
+                }
+              }
+            }
+          }
+        ],
+        "restartPolicy": "OnFailure",
+        "imageRegistryCredentials": [
+          {
+            "server": "dogfoodcloudapp20210222172930.azurecr.io",
+            "username": "DogfoodCloudApp20210222172930",
+            "password": "null"
+          }
+        ],
+        "ipAddress": {
+          "type": "Public",
+          "ports": [
+            {
+              "port": 80,
+              "protocol": "TCP"
+            }
+          ],
+          "dnsNameLabel": "[parameters('DnsName')]"
+        },
+        "osType": "Linux"
+      }
+    }
+  ],
+  "outputs": {}
+}
